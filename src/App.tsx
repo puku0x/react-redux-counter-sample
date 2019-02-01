@@ -1,28 +1,49 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { AppState } from './store';
 
-class App extends Component {
+import { CounterState } from './store/counter/types';
+import { increment, decrement, reset } from './store/counter/actions';
+
+import Counter from './components/Counter';
+
+interface AppProps {
+  counter: CounterState;
+  increment: typeof increment;
+  decrement: typeof decrement;
+  reset: typeof reset;
+}
+
+class App extends React.Component<AppProps> {
+  increment = () => {
+    this.props.increment();
+  };
+
+  decrement = () => {
+    this.props.decrement();
+  };
+
+  reset = () => {
+    this.props.reset();
+  };
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <Counter
+        value={this.props.counter.value}
+        onIncrement={this.increment}
+        onDecrement={this.decrement}
+        onReset={this.reset}
+      />
     );
   }
 }
 
-export default App;
+const mapStateToProps = (state: AppState) => ({
+  counter: state.counter
+});
+
+export default connect(
+  mapStateToProps,
+  { increment, decrement, reset }
+)(App);
